@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity
         lin.setOrientation(LinearLayout.VERTICAL);
 
         accelR=new TextView(getApplicationContext());
-        highAccel = new TextView (getApplicationContext());
         record = (Button) findViewById(R.id.button);
 
         accelR.setTextColor(Color.parseColor("#000000"));
@@ -55,13 +54,11 @@ public class MainActivity extends AppCompatActivity
         SensorManager sensorManager = (SensorManager) getSystemService (SENSOR_SERVICE);
         Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
-        highAccel.setText("Max Accelerometer (x,y,z): 0,0,0");
         AccelerometerSensorEventListener a = new AccelerometerSensorEventListener(accelR, record, getApplicationContext());
 
         sensorManager.registerListener(a, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
         verifyStoragePermissions(this);
         lin.addView(accelR);
-        lin.addView(highAccel);
     }
 
     // Storage Permissions
@@ -187,7 +184,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
         File dir = new File (sdCard.getAbsolutePath()+"/Download");
         dir.mkdirs();
         File file = new File(dir, "stepvalues.txt");
-        
+
         try
         {
             os = new FileOutputStream(file, true);
