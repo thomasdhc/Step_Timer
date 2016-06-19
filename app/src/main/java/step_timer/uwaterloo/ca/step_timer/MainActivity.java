@@ -33,7 +33,6 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity
 {
     TextView accelR;
-    TextView highAccel;
     Button record;
 
     @Override
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity
         record = (Button) findViewById(R.id.button);
 
         accelR.setTextColor(Color.parseColor("#000000"));
-        highAccel.setTextColor(Color.parseColor("#000000"));
 
         SensorManager sensorManager = (SensorManager) getSystemService (SENSOR_SERVICE);
         Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
