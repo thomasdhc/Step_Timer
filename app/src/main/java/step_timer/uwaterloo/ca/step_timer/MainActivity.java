@@ -92,7 +92,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
     TextView output;
     Button record;
     boolean pressed = false;
-    int stepTimer = 10;
+    int stepTimer = 5;
     long startTime = 0;
     long endTime = 0;
     float[] smoothedAccel = new float[3];
@@ -167,10 +167,10 @@ class AccelerometerSensorEventListener implements SensorEventListener
     public void stopRecording()
     {
         endTime = System.currentTimeMillis();
-        if (stepValues.size() > 70 )
+        if (stepValues.size() > 100 )
         {
             int total = stepValues.size();
-            int discard = stepValues.size() - 70;
+            int discard = stepValues.size() - 100;
             int divsion= stepValues.size()/discard;
             //Log.i("Finsihed recording", stepValues.size() + " " + discard + " " + divsion);
             for (int x =0 ; x< discard ; x++)
