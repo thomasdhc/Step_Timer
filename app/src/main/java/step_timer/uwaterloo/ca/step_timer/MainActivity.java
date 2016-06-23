@@ -184,7 +184,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
     {
         recorded++;
        stepValues.add(smoothedAccel[2]);
-        if (recorded == 400)
+        if (recorded == 401)
         {
             recorded = 0;
             mHandler.obtainMessage(1).sendToTarget();
@@ -232,6 +232,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
         {
             Log.e("IOException", "IOException occured");
         }
+        stepValues.clear();
     }
 
 }
