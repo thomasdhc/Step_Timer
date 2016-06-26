@@ -107,7 +107,9 @@ class AccelerometerSensorEventListener implements SensorEventListener
     int stepTimer = 10;
     int recorded =0;
     float[] smoothedAccel = new float[3];
-    List<Float> stepValues = new ArrayList<Float>();
+    List<Float> stepValuesX = new ArrayList<Float>();
+    List<Float> stepValuesY = new ArrayList<Float>();
+    List<Float> stepValuesZ = new ArrayList<Float>();
     FileOutputStream os;
     PrintWriter out;
 
@@ -132,7 +134,6 @@ class AccelerometerSensorEventListener implements SensorEventListener
                 {
                     pressed = true;
                     record.setText("Recording");
-                    stepValues.clear();
                 }
             }
         });
@@ -172,7 +173,9 @@ class AccelerometerSensorEventListener implements SensorEventListener
     public void startRecording()
     {
         recorded++;
-       stepValues.add(smoothedAccel[2]);
+        stepValuesX.add(smoothedAccel[0]);
+        stepValuesY.add(smoothedAccel[1]);
+        stepValuesZ.add(smoothedAccel[2]);
         if (stepSpinner.getSelectedItem().equals("Slow Step") && recorded == 71)
         {
             recorded = 0;
@@ -219,9 +222,17 @@ class AccelerometerSensorEventListener implements SensorEventListener
             {
                 out.println ("1");
             }
+            for (int x = 0; x < 70; x++)
+            {
+                out.print(stepValuesX.get(x) + " ");
+            }
             for (int y = 0; y < 70; y++)
             {
-                out.print(stepValues.get(y) + " ");
+                out.print(stepValuesY.get(y) + " ");
+            }
+            for (int z = 0; z < 70; z++)
+            {
+                out.print(stepValuesZ.get(z) + " ");
             }
             out.println ();
 
@@ -236,7 +247,9 @@ class AccelerometerSensorEventListener implements SensorEventListener
         {
             Log.e("IOException", "IOException occured");
         }
-        stepValues.clear();
+        stepValuesX.clear();
+        stepValuesY.clear();
+        stepValuesZ.clear();
     }
 
     public void scalingStep (String scalingType)
@@ -245,14 +258,18 @@ class AccelerometerSensorEventListener implements SensorEventListener
         {
             for (int x =1; x< 16 ; x++)
             {
-                stepValues.add(55-x*3, stepValues.get(55 - x*3 - 1) +(stepValues.get(55 - x*3)-stepValues.get(55 - x*3 - 1))/2);
+                stepValuesX.add(55-x*3, stepValuesX.get(55 - x*3 - 1) +(stepValuesX.get(55 - x*3)-stepValuesX.get(55 - x*3 - 1))/2);
+                stepValuesY.add(55-x*3, stepValuesY.get(55 - x*3 - 1) +(stepValuesY.get(55 - x*3)-stepValuesY.get(55 - x*3 - 1))/2);
+                stepValuesZ.add(55-x*3, stepValuesZ.get(55 - x*3 - 1) +(stepValuesZ.get(55 - x*3)-stepValuesZ.get(55 - x*3 - 1))/2);
             }
         }
         else
         {
             for (int x =1; x< 31 ; x++)
             {
-                stepValues.add(40 - x, stepValues.get(40 - x - 1) +(stepValues.get(40 - x)-stepValues.get(40 - x - 1))/2);
+                stepValuesX.add(40 - x, stepValuesX.get(40 - x - 1) +(stepValuesX.get(40 - x)-stepValuesX.get(40 - x - 1))/2);
+                stepValuesY.add(40 - x, stepValuesY.get(40 - x - 1) +(stepValuesY.get(40 - x)-stepValuesY.get(40 - x - 1))/2);
+                stepValuesZ.add(40 - x, stepValuesZ.get(40 - x - 1) +(stepValuesZ.get(40 - x)-stepValuesZ.get(40 - x - 1))/2);
             }
         }
     }
