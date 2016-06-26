@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Step_Timer</string>
+    <string-array name="step_options">
+        <item>Slow Step</item>
+        <item>Normal Step</item>
+        <item>Fast Step</item>
+        <item>Not Step</item>
+    </string-array>
 </resources>

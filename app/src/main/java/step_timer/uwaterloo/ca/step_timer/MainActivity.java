@@ -18,8 +18,11 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.File;
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity
 {
     TextView accelR;
     Button record;
-    Button step;
+    Spinner stepSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,14 +52,18 @@ public class MainActivity extends AppCompatActivity
 
         accelR=new TextView(getApplicationContext());
         record = (Button) findViewById(R.id.button);
-        step = (Button) findViewById(R.id.button2);
+        stepSpinner = (Spinner) findViewById(R.id.spinner1);
 
         accelR.setTextColor(Color.parseColor("#000000"));
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.step_options, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource (android.R.layout.simple_spinner_dropdown_item);
+        stepSpinner.setAdapter(adapter);
 
         SensorManager sensorManager = (SensorManager) getSystemService (SENSOR_SERVICE);
         Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
-        AccelerometerSensorEventListener a = new AccelerometerSensorEventListener(accelR, record, step, getApplicationContext());
+        AccelerometerSensorEventListener a = new AccelerometerSensorEventListener(accelR, record, stepSpinner, getApplicationContext());
 
         sensorManager.registerListener(a, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
         verifyStoragePermissions(this);
@@ -95,12 +102,10 @@ class AccelerometerSensorEventListener implements SensorEventListener
     Context context;
     TextView output;
     Button record;
-    Button step;
+    Spinner stepSpinner;
     boolean pressed = false;
-    int stepTimer = 5;
+    int stepTimer = 10;
     int recorded =0;
-    long startTime = 0;
-    long endTime = 0;
     float[] smoothedAccel = new float[3];
     List<Float> stepValues = new ArrayList<Float>();
     FileOutputStream os;
@@ -112,12 +117,12 @@ class AccelerometerSensorEventListener implements SensorEventListener
         }
     };
 
-    public AccelerometerSensorEventListener(TextView outputView, final Button recordStep, Button setStep, Context context)
+    public AccelerometerSensorEventListener(TextView outputView, final Button recordStep, Spinner stepTypeSpinner, Context context)
     {
         output = outputView;
         record = recordStep;
         this.context=context;
-        step = setStep;
+        stepSpinner = stepTypeSpinner;
         record.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -127,23 +132,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
                 {
                     pressed = true;
                     record.setText("Recording");
-                    startTime = System.currentTimeMillis();
                     stepValues.clear();
-                }
-            }
-        });
-        step.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                if (step.getText().equals("Step"))
-                {
-                    step.setText("Not Step");
-                }
-                else
-                {
-                    step.setText ("Step");
                 }
             }
         });
@@ -184,11 +173,27 @@ class AccelerometerSensorEventListener implements SensorEventListener
     {
         recorded++;
        stepValues.add(smoothedAccel[2]);
-        if (recorded == 401)
+        if (stepSpinner.getSelectedItem().equals("Slow Step") && recorded == 71)
         {
             recorded = 0;
             mHandler.obtainMessage(1).sendToTarget();
             pressed = false;
+            stopRecording();
+        }
+        if (stepSpinner.getSelectedItem().equals("Normal Step") && recorded == 56)
+        {
+            recorded = 0;
+            mHandler.obtainMessage(1).sendToTarget();
+            pressed = false;
+            scalingStep ("Normal Step");
+            stopRecording();
+        }
+        if (stepSpinner.getSelectedItem().equals("Fast Step") && recorded == 41)
+        {
+            recorded = 0;
+            mHandler.obtainMessage(1).sendToTarget();
+            pressed = false;
+            scalingStep ("Fast Step");
             stopRecording();
         }
     }
@@ -196,7 +201,6 @@ class AccelerometerSensorEventListener implements SensorEventListener
     //Once stop is pressed write the list values. We want exactly 70 points of accelerometer readings.
     public void stopRecording()
     {
-        //endTime = System.currentTimeMillis();
 
         File sdCard = Environment.getExternalStorageDirectory();
         File dir = new File (sdCard.getAbsolutePath()+"/Download");
@@ -207,19 +211,19 @@ class AccelerometerSensorEventListener implements SensorEventListener
         {
             os = new FileOutputStream(file, true);
             out = new PrintWriter(os);
-            for (int x =0; x< 4; x++)
+            if (stepSpinner.getSelectedItem().equals("Not Step"))
             {
-                if (step.getText().equals("Not Step"))
-                {
-                    out.println("0");
-                }
-                for (int y = 0; y < 100; y++)
-                {
-                    //Log.i ("Record:", stepValues.get(x)+" ");
-                    out.print(stepValues.get(y + x*100) + " ");
-                }
-                out.println ();
+                out.println("0");
             }
+            else
+            {
+                out.println ("1");
+            }
+            for (int y = 0; y < 70; y++)
+            {
+                out.print(stepValues.get(y) + " ");
+            }
+            out.println ();
 
             out.close();
             os.close();
@@ -235,6 +239,23 @@ class AccelerometerSensorEventListener implements SensorEventListener
         stepValues.clear();
     }
 
+    public void scalingStep (String scalingType)
+    {
+        if (scalingType.equals("Normal Step"))
+        {
+            for (int x =1; x< 16 ; x++)
+            {
+                stepValues.add(55-x*3, stepValues.get(55 - x*3 - 1) +(stepValues.get(55 - x*3)-stepValues.get(55 - x*3 - 1))/2);
+            }
+        }
+        else
+        {
+            for (int x =1; x< 31 ; x++)
+            {
+                stepValues.add(40 - x, stepValues.get(40 - x - 1) +(stepValues.get(40 - x)-stepValues.get(40 - x - 1))/2);
+            }
+        }
+    }
 }
 
 
