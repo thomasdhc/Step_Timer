@@ -4,6 +4,8 @@
         <item>Slow Step</item>
         <item>Normal Step</item>
         <item>Fast Step</item>
-        <item>Not Step</item>
+        <item>Not Slow Step</item>
+        <item>Not Normal Step</item>
+        <item>Not Fast Step</item>
     </string-array>
 </resources>

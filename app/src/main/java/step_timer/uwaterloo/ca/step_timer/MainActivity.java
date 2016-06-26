@@ -206,9 +206,21 @@ class AccelerometerSensorEventListener implements SensorEventListener
             fileName = "stepvaluesFast.txt";
             stopRecording();
         }
-        if (stepSpinner.getSelectedItem().equals("Not Step") && recorded == 71)
+        if (stepSpinner.getSelectedItem().equals("Not Slow Step") && recorded == 71)
         {
-            fileName = "stepvaluesNot.txt";
+            fileName = "stepvaluesNotFast.txt";
+            stopRecording();
+        }
+        if (stepSpinner.getSelectedItem().equals("Not Normal Step") && recorded == 56)
+        {
+            scalingStep ("Normal Step");
+            fileName = "stepvaluesNotFast.txt";
+            stopRecording();
+        }
+        if (stepSpinner.getSelectedItem().equals("Not Fast Step") && recorded == 41)
+        {
+            scalingStep ("Fast Step");
+            fileName = "stepvaluesNotFast.txt";
             stopRecording();
         }
     }
@@ -230,7 +242,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
         {
             os = new FileOutputStream(file, true);
             out = new PrintWriter(os);
-            if (stepSpinner.getSelectedItem().equals("Not Step"))
+            if (stepSpinner.getSelectedItem().equals("Not Slow Step")||stepSpinner.getSelectedItem().equals("Not Normal Step")||stepSpinner.getSelectedItem().equals("Not Fast Step"))
             {
                 out.println("0");
             }
