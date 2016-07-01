@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity
     TextView accelR;
     TextView stepCounter;
     Button record;
+    Button reset;
     Spinner stepSpinner;
 
     @Override
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity
         accelR=new TextView(getApplicationContext());
         stepCounter = new TextView(getApplicationContext());
         record = (Button) findViewById(R.id.button);
+        reset = (Button) findViewById(R.id.button2);
         stepSpinner = (Spinner) findViewById(R.id.spinner1);
 
         accelR.setTextColor(Color.parseColor("#000000"));
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         SensorManager sensorManager = (SensorManager) getSystemService (SENSOR_SERVICE);
         Sensor accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
-        AccelerometerSensorEventListener a = new AccelerometerSensorEventListener(accelR, stepCounter, record, stepSpinner, getApplicationContext());
+        AccelerometerSensorEventListener a = new AccelerometerSensorEventListener(accelR, stepCounter, record, reset, stepSpinner, getApplicationContext());
 
         sensorManager.registerListener(a, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
         verifyStoragePermissions(this);
@@ -109,6 +111,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
     TextView output;
     TextView stepCounter;
     Button record;
+    Button reset;
     Spinner stepSpinner;
     boolean pressed = false;
     int stepTimer = 10;
@@ -128,10 +131,11 @@ class AccelerometerSensorEventListener implements SensorEventListener
         }
     };
 
-    public AccelerometerSensorEventListener(TextView outputView, TextView numSteps, final Button recordStep, Spinner stepTypeSpinner, Context context)
+    public AccelerometerSensorEventListener(TextView outputView, TextView numSteps, final Button recordStep, Button resetStep, Spinner stepTypeSpinner, Context context)
     {
         output = outputView;
         record = recordStep;
+        reset = resetStep;
         stepCounter = numSteps;
         this.context=context;
         stepSpinner = stepTypeSpinner;
@@ -146,6 +150,15 @@ class AccelerometerSensorEventListener implements SensorEventListener
                     pressed = true;
                     record.setText("Recording");
                 }
+            }
+        });
+        reset.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                stepsRecorded =0;
+                mHandler.sendEmptyMessage(1);
             }
         });
         TimerTask timerTask = new TimerTask()
@@ -185,12 +198,12 @@ class AccelerometerSensorEventListener implements SensorEventListener
     {
         recorded++;
         stepValuesZ.add(smoothedAccel[2]);
-        if (stepSpinner.getSelectedItem().equals("Normal Step") && recorded == 56)
+        if (stepSpinner.getSelectedItem().equals("Normal Step") && recorded == 61)
         {
             fileName = "stepvaluesNormal.txt";
             stopRecording();
         }
-        if (stepSpinner.getSelectedItem().equals("Not Normal Step") && recorded == 56)
+        if (stepSpinner.getSelectedItem().equals("Not Normal Step") && recorded == 61)
         {
             fileName = "stepvaluesNot.txt";
             stopRecording();
@@ -223,7 +236,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
                 out.println ("1");
             }
 
-            for (int z = 0; z < 70; z++)
+            for (int z = 0; z < 60; z++)
             {
                 out.print(stepValuesZ.get(z) + " ");
             }
