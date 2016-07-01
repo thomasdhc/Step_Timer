@@ -115,8 +115,6 @@ class AccelerometerSensorEventListener implements SensorEventListener
     int recorded =0;
     int stepsRecorded =0;
     float[] smoothedAccel = new float[3];
-    List<Float> stepValuesX = new ArrayList<Float>();
-    List<Float> stepValuesY = new ArrayList<Float>();
     List<Float> stepValuesZ = new ArrayList<Float>();
     FileOutputStream os;
     PrintWriter out;
@@ -186,41 +184,15 @@ class AccelerometerSensorEventListener implements SensorEventListener
     public void startRecording()
     {
         recorded++;
-        stepValuesX.add(smoothedAccel[0]);
-        stepValuesY.add(smoothedAccel[1]);
         stepValuesZ.add(smoothedAccel[2]);
-        if (stepSpinner.getSelectedItem().equals("Slow Step") && recorded == 71)
-        {
-            fileName = "stepvaluesSlow.txt";
-            stopRecording();
-        }
         if (stepSpinner.getSelectedItem().equals("Normal Step") && recorded == 56)
         {
-            scalingStep ("Normal Step");
             fileName = "stepvaluesNormal.txt";
-            stopRecording();
-        }
-        if (stepSpinner.getSelectedItem().equals("Fast Step") && recorded == 41)
-        {
-            scalingStep ("Fast Step");
-            fileName = "stepvaluesFast.txt";
-            stopRecording();
-        }
-        if (stepSpinner.getSelectedItem().equals("Not Slow Step") && recorded == 71)
-        {
-            fileName = "stepvaluesNotFast.txt";
             stopRecording();
         }
         if (stepSpinner.getSelectedItem().equals("Not Normal Step") && recorded == 56)
         {
-            scalingStep ("Normal Step");
-            fileName = "stepvaluesNotFast.txt";
-            stopRecording();
-        }
-        if (stepSpinner.getSelectedItem().equals("Not Fast Step") && recorded == 41)
-        {
-            scalingStep ("Fast Step");
-            fileName = "stepvaluesNotFast.txt";
+            fileName = "stepvaluesNot.txt";
             stopRecording();
         }
     }
@@ -242,7 +214,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
         {
             os = new FileOutputStream(file, true);
             out = new PrintWriter(os);
-            if (stepSpinner.getSelectedItem().equals("Not Slow Step")||stepSpinner.getSelectedItem().equals("Not Normal Step")||stepSpinner.getSelectedItem().equals("Not Fast Step"))
+            if (stepSpinner.getSelectedItem().equals("Not Normal Step"))
             {
                 out.println("0");
             }
@@ -250,20 +222,12 @@ class AccelerometerSensorEventListener implements SensorEventListener
             {
                 out.println ("1");
             }
-            for (int x = 0; x < 70; x++)
-            {
-                out.print(stepValuesX.get(x) + " ");
-            }
-            for (int y = 0; y < 70; y++)
-            {
-                out.print(stepValuesY.get(y) + " ");
-            }
+
             for (int z = 0; z < 70; z++)
             {
                 out.print(stepValuesZ.get(z) + " ");
             }
             out.println ();
-
             out.close();
             os.close();
         }
@@ -275,12 +239,10 @@ class AccelerometerSensorEventListener implements SensorEventListener
         {
             Log.e("IOException", "IOException occured");
         }
-        stepValuesX.clear();
-        stepValuesY.clear();
         stepValuesZ.clear();
     }
 
-    public void scalingStep (String scalingType)
+    /*public void scalingStep (String scalingType)
     {
         if (scalingType.equals("Normal Step"))
         {
@@ -300,7 +262,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
                 stepValuesZ.add(40 - x, stepValuesZ.get(40 - x - 1) +(stepValuesZ.get(40 - x)-stepValuesZ.get(40 - x - 1))/2);
             }
         }
-    }
+    }*/
 }
 
 
