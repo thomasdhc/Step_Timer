@@ -203,7 +203,7 @@ class AccelerometerSensorEventListener implements SensorEventListener
             fileName = "stepvaluesNormal.txt";
             stopRecording();
         }
-        if (stepSpinner.getSelectedItem().equals("Not Normal Step") && recorded == 61)
+        if (stepSpinner.getSelectedItem().equals("Not Normal Step") && recorded == 6001)
         {
             fileName = "stepvaluesNot.txt";
             stopRecording();
@@ -229,18 +229,25 @@ class AccelerometerSensorEventListener implements SensorEventListener
             out = new PrintWriter(os);
             if (stepSpinner.getSelectedItem().equals("Not Normal Step"))
             {
-                out.println("0");
+                for (int x = 0; x < 100 ; x++)
+                {
+                    out.println("0");
+                    for (int z = 0; z < 60; z++)
+                    {
+                        out.print(stepValuesZ.get(z + (x*60)) + " ");
+                    }
+                    out.println ();
+                }
             }
             else
             {
                 out.println ("1");
+                for (int z = 0; z < 60; z++)
+                {
+                    out.print(stepValuesZ.get(z) + " ");
+                }
+                out.println ();
             }
-
-            for (int z = 0; z < 60; z++)
-            {
-                out.print(stepValuesZ.get(z) + " ");
-            }
-            out.println ();
             out.close();
             os.close();
         }
